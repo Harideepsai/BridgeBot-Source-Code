@@ -1,0 +1,64 @@
+# robot_motion.py
+
+# IMPORTANT: You need to install libraries like RPi.GPIO for actual hardware control
+
+# --- Placeholder for Motor Control ---
+def move_forward():
+    print("ROBOT: Moving Forward...")
+    # GPIO.output(LEFT_MOTOR, GPIO.HIGH)
+    # GPIO.output(RIGHT_MOTOR, GPIO.HIGH)
+
+def stop_motors():
+    print("ROBOT: Motors Stopped.")
+    # GPIO.output(ALL_MOTORS, GPIO.LOW)
+
+def turn_left():
+    print("ROBOT: Turning Left...")
+    # Logic to move one wheel forward and the other backward
+
+# --- Feature 2: Autonomous Navigation ---
+def check_for_obstacles():
+    """Placeholder for ultrasonic/LiDAR sensor reading."""
+    # distance = read_sensor()
+    distance = 15  # Simulate a 15cm distance
+    if distance < 20: # Obstacle too close
+        return True
+    return False
+
+def autonomous_mode_loop():
+    """Simple loop for obstacle avoidance."""
+    if check_for_obstacles():
+        stop_motors()
+        turn_left()
+        move_forward() # Move slightly to clear obstacle
+    else:
+        move_forward() # Continue moving towards goal
+
+# --- Feature 3: Guardian Link Control (Remote Override) ---
+is_remote_control_active = False
+
+def set_remote_control(status):
+    global is_remote_control_active
+    is_remote_control_active = status
+    if status:
+        print("ROBOT: Guardian Link ACTIVATED. Remote commands accepted.")
+    else:
+        print("ROBOT: Guardian Link DEACTIVATED. Switching to Autonomous/Idle.")
+        stop_motors()
+
+def execute_remote_command(command):
+    if is_remote_control_active:
+        if command == "forward":
+            move_forward()
+        elif command == "stop":
+            stop_motors()
+        elif command == "left":
+            turn_left()
+        # Add logic for video streaming (e.g., send video frame to web server)
+    else:
+        print("Error: Remote control not active.")
+
+# Example Usage:
+# set_remote_control(True)
+# execute_remote_command("forward")
+# execute_remote_command("stop")
