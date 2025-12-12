@@ -1,0 +1,63 @@
+# chatbot_iot_parser.py
+
+import re
+
+# --- 1. Define Command Patterns (Intents) ---
+# This is a simple rule-based NLP substitute for the hackathon
+IOT_COMMANDS = {
+    r"turn (on|off) the (light|lamp) in the (.*)": "light_control",
+    r"set the temperature to (\d+) degrees": "temp_control",
+    r"go to the (.*)": "motion_command",
+    r"where is the nearest person": "sensor_query"
+}
+
+# --- 2. IoT Emulation Functions (REPLACE WITH REAL HARDWARE CODE) ---
+def send_iot_command(device, action, location=None, value=None):
+    """Placeholder for actual IoT API calls (e.g., MQTT, REST API)."""
+    if action == "light_control":
+        return f"Acknowledged. The {device} in the {location} has been turned {value}."
+    elif action == "temp_control":
+        return f"Acknowledged. Setting the thermostat to {value} degrees."
+    elif action == "motion_command":
+        # Hand off to the robot_motion.py script
+        return f"Initiating autonomous travel to the {location}."
+    return "I'm not sure how to handle that command yet."
+
+# --- 3. Main Chatbot Function ---
+def process_command(text):
+    text = text.lower().strip()
+
+    # Check for specific IOT commands
+    for pattern, action_type in IOT_COMMANDS.items():
+        match = re.match(pattern, text)
+        if match:
+            # Handle Light Control
+            if action_type == "light_control":
+                action = match.group(1)
+                device = match.group(2)
+                location = match.group(3)
+                return send_iot_command(device, action_type, location=location, value=action)
+            
+            # Handle Temperature Control
+            elif action_type == "temp_control":
+                value = match.group(1)
+                return send_iot_command("thermostat", action_type, value=value)
+
+            # Handle Motion Command
+            elif action_type == "motion_command":
+                location = match.group(1)
+                return send_iot_command("robot", action_type, location=location)
+
+    # General chat responses (can be expanded with ChatterBot or a deep learning model)
+    if "hello" in text or "hi" in text:
+        return "Hello! I'm BridgeBot. How can I help you with your home today?"
+    if "thank you" in text:
+        return "You're welcome! Happy to help."
+
+    return "Sorry, I didn't understand that. Could you try phrasing it differently?"
+
+# Example Usage:
+# print(process_command("Turn on the lamp in the living room"))
+# print(process_command("set the temperature to 22 degrees"))
+# print(process_command("Go to the kitchen"))
+# print(process_command("What is the weather like?"))
